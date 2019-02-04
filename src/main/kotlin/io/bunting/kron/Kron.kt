@@ -144,8 +144,7 @@ internal class TaskLauncher(private val launchTime: LocalDateTime,
                             private val logger: KronLogger,
                             private val spawnTask: (String, KronTask)->Unit): Runnable {
     override fun run() {
-        for ((taskId, pair) in taskSource.scheduledTasks().entries) {
-            val (pattern, task) = pair
+        for ((taskId, pattern, task) in taskSource.scheduledTasks()) {
             if (pattern.matches(launchTime)) {
                 spawnTask(taskId, task)
             }

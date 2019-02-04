@@ -7,8 +7,6 @@ plugins {
 
 group = "io.bunting.kron"
 version = "1.0.0-SNAPSHOT"
-group = "io.bunting.kron"
-version = "1.0.0-SNAPSHOT"
 
 repositories {
     mavenCentral()

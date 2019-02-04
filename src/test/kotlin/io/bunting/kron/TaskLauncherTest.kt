@@ -19,10 +19,10 @@ internal class TaskLauncherTest {
             @Mock(name="taskSource") taskSource: KronTaskSource,
             @Mock(name="spawnTask") spawnTask: (String,KronTask)->Unit) {
         val launchTime = LocalDateTime.parse("2019-01-05T12:34:00")
-        whenever(taskSource.scheduledTasks()).thenReturn(mapOf(
-            "t1" to (pattern1 to task1),
-            "t2" to (pattern2 to task2),
-            "t3" to (pattern3 to task3)
+        whenever(taskSource.scheduledTasks()).thenReturn(listOf(
+            TaskDefinition("t1", pattern1, task1),
+            TaskDefinition("t2", pattern2, task2),
+            TaskDefinition("t3", pattern3, task3)
         ))
         whenever(pattern1.matches(launchTime)).thenReturn(true)
         whenever(pattern2.matches(launchTime)).thenReturn(true)

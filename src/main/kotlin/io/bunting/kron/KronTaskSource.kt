@@ -14,23 +14,29 @@ interface KronTaskSource {
 
     fun size(): Int
 
-    fun scheduledTasks(): Map<String, Pair<KronPattern, KronTask>>
+    fun scheduledTasks(): Iterable<TaskDefinition>
+}
+
+class TaskDefinition(val id: String, val pattern: KronPattern, val task: KronTask) {
+    operator fun component1() = id
+    operator fun component2() = pattern
+    operator fun component3() = task
 }
 
 class SimpleKronTaskSource(private val name: String = "<simple>"): KronTaskSource {
 
-    private val tasks = mutableMapOf<String, Pair<KronPattern, KronTask>>()
+    private val tasks = mutableMapOf<String, TaskDefinition>()
 
     override fun name(): String = name
 
     override fun size(): Int = tasks.size
 
-    override fun scheduledTasks(): Map<String, Pair<KronPattern, KronTask>> =
-        object: Map<String, Pair<KronPattern, KronTask>> by tasks {}
+    override fun scheduledTasks(): Iterable<TaskDefinition> =
+        object: Iterable<TaskDefinition> by tasks.values {}
 
     fun add(pattern: KronPattern, task: KronTask): String {
         val id = name() + UUID.randomUUID().toString()
-        tasks.put(id, pattern to task)
+        tasks.put(id, TaskDefinition(id, pattern, task))
         return id
     }
 
@@ -44,8 +50,7 @@ class AggregateKronTaskSource(private val taskSources: Iterable<KronTaskSource>,
 
     override fun size(): Int = taskSources.map { it.size() }.sum()
 
-    override fun scheduledTasks(): Map<String, Pair<KronPattern, KronTask>> = taskSources
-        .flatMap { it.scheduledTasks().toList() }
-        .toMap()
+    override fun scheduledTasks(): Iterable<TaskDefinition> = taskSources
+        .flatMap { it.scheduledTasks() }
 
 }
